@@ -142,6 +142,10 @@ class clientmanager(dict):
 # create our own OSC container
 class OSCpacket(OSC.OSCMessage):
 	
+	def __init__(self, address=""):
+		OSC.OSCMessage.__init__(self, address)
+		self.SERIAL = slip.slip()
+	
 	def unpack(self, raw):
 		unpacked = OSC.decodeOSC(raw)
 		packet = OSCpacket(unpacked[0])
@@ -149,6 +153,19 @@ class OSCpacket(OSC.OSCMessage):
 			if i > 0:
 				packet.append(unpacked[i+1], unpacked[1][i])
 		return packet
+
+	def SERIALappend(self, chunk):
+		self.SERIAL.append(chunk)
+
+	def SERIALunpack(self):
+		packetlist = []
+		rawpacketlist = self.SERIAL.decode()
+		for rawpacket in rawpacketlist:
+			packetlist.append(OSCpacket().unpack(rawpacket))
+		return packetlist
+
+	def SERIALpack(self):
+		return self.SERIAL.encode(self.pack())
 
 	def pack(self):
 		return self.getBinary()
