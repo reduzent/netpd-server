@@ -180,10 +180,13 @@ def thprint(msg):
 
 # SERVER METHODS
 def welcome(no):
-	pass
+	number = len(server.senders)
+	OSCmsg = OSCpacket('/server/num_of_clients')
+	OSCmsg.append(number)
+	broadcast(OSCmsg)
 
 def goodbye(no):
-	pass
+	welcome(no)
 
 def broadcast(msg):
 	senderlist = server.senders.getall()
@@ -191,13 +194,16 @@ def broadcast(msg):
 		senderlist[no].put(('msg', msg))
 
 def sendsocketno(no):
-	pass
+	sender = server.senders.get(no)
+	sender.put(('msg', ['ch.socket', str(no)]))
 
 def test(msg):
 	pass
 
 def sendtoclient(no, msg):
-	pass
+	if no in server.senders:
+		sender = server.senders.get(no)
+		sender.put(('msg', msg))
 
 # MAIN
 def main():
