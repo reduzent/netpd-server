@@ -3,7 +3,7 @@
 #######################################################################
 # THREADED NETPD SERVER
 # 
-# This is non-blocking version of the the netpd-server. Each connected
+# This is non-blocking version of the the netpd-server2. Each connected
 # client uses it's own sender and receiver thread and messages are
 # passed with python Queues between threads. 
 #
@@ -18,7 +18,7 @@
 
 ### MAIN SETTINGS ####################################################
 # Which port should the server listen on?
-PORT = 8003
+PORT = 8004
 # How many messages should be bufferd before disconnecting a non-
 # responsive client?
 BUFFERSIZE = 40000 
@@ -37,12 +37,12 @@ class sender(threading.Thread):
 	def run(self):
 		no = self.socket.fileno()
 		while 1:
-			cmd, msg = self.queue.get()
+			cmd, OSCmsg = self.queue.get()
 			if cmd == 'msg':
-				msg = FUDIcompose(msg)
+				data = OSCmsg.SERIALpack()
 				while True:
 					try:
-						self.socket.sendall(msg)
+						self.socket.sendall(data)
 						break
 					except socket.timeout:
 						thprint('queue size: %d' % self.queue.qsize())
@@ -67,6 +67,7 @@ class receiver(threading.Thread):
 		self.queue = queue
 		self.sendqueue = sendqueue
 		self.peername = self.socket.getpeername()
+		self.OSCcontainer = OSCpacket()
 
 	def run(self):
 		no = self.socket.fileno()
@@ -76,11 +77,11 @@ class receiver(threading.Thread):
 			try:
 				chunk = self.socket.recv(4096)
 				if not chunk: break
-				messages, rest = FUDIparse(chunk, rest)
-				for msg in messages:
-					self.queue.put((no, msg))
+				self.OSCcontainer.SERIALappend(chunk)
+				for OSCmsg in self.OSCcontainer.SERIALunpack():
+					self.queue.put((no, OSCmsg))
 			except socket.timeout:
-				bla = 1
+				pass
                 thprint('Client left: %s %d' % self.peername)
 		self.sendqueue.put(('stop', None))
 
@@ -185,7 +186,9 @@ def goodbye(no):
 	pass
 
 def broadcast(msg):
-	pass
+	senderlist = server.senders.getall()
+	for no in senderlist:
+		senderlist[no].put(('msg', msg))
 
 def sendsocketno(no):
 	pass
@@ -208,18 +211,10 @@ def main():
 			try:
 				# Do the actual server work
 				no, msg = server.recqueue.get(True, 1)
-				if msg[0] == '_all' and len(msg) > 1:
-					broadcast(msg[1:])
-				elif msg[0].isdigit() and len(msg) > 1:
-					sendtoclient(int(msg[0]), msg[1:])
-				elif msg[0] == '_socketrequest':
-					sendsocketno(no)
-				elif msg[0] == '_test':
-					test(msg)
-				else:
-					thprint("Unknown method: %s" % msg[0])
+				print msg
+				broadcast(msg)
 			except Queue.Empty:
-				bla = 1
+				pass
 	except KeyboardInterrupt:
 		senderlist = server.senders.getall()
 		for no in senderlist:
@@ -228,6 +223,6 @@ def main():
 		thprint("\nStopping Server ...")
 		exit()
 
-#if __name__ == '__main__':
-#	main()
+if __name__ == '__main__':
+	main()
 
