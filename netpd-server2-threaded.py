@@ -170,6 +170,9 @@ class OSCpacket(OSC.OSCMessage):
 
 	def pack(self):
 		return self.getBinary()
+
+	def getAddress(self):
+		return OSC.decodeOSC(self.getBinary())[0]
 			
 # non-scrambled print
 printlock = threading.Lock()
@@ -195,7 +198,9 @@ def broadcast(msg):
 
 def sendsocketno(no):
 	sender = server.senders.get(no)
-	sender.put(('msg', ['ch.socket', str(no)]))
+	OSCmsg = OSCpacket('/server/socket')
+	OSCmsg.append(no)
+	sender.put(('msg', OSCmsg))
 
 def test(msg):
 	pass
@@ -216,9 +221,11 @@ def main():
 		while 1:
 			try:
 				# Do the actual server work
-				no, msg = server.recqueue.get(True, 1)
-				print msg
-				broadcast(msg)
+				no, OSCmsg = server.recqueue.get(True, 1)
+				addr = OSCmsg.getAddress()
+				if  addr.split('/')[1] == 'b':
+					pass
+				broadcast(OSCmsg)
 			except Queue.Empty:
 				pass
 	except KeyboardInterrupt:
