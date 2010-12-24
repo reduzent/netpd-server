@@ -18,7 +18,7 @@
 
 ### MAIN SETTINGS ####################################################
 # Which port should the server listen on?
-PORT = 8004
+PORT = 8003
 # How many messages should be bufferd before disconnecting a non-
 # responsive client?
 BUFFERSIZE = 40000 
@@ -104,7 +104,7 @@ class requesthandler(threading.Thread):
 				no = sock.fileno()
 				# make the sender queue 10% bigger than the disconnect limit
 				sendqueue = Queue.Queue(int(BUFFERSIZE * 1.1))
-				self.senders.add(no, sendqueue)
+				self.senders.add(no, (sendqueue, sock.getpeername()))
 				recthread = receiver(sock, self.recqueue, sendqueue)
 				sendthread = sender(sock, sendqueue)
 				recthread.start()
@@ -133,6 +133,18 @@ class clientmanager(dict):
 	def getall(self):
 		copy = self.copy()
 		return copy
+
+	def getqueue(self, key):
+		if key in self:
+			return self[key][0]
+		else:
+			return None
+
+	def getaddr(self, key):
+		if key in self:
+			return self[key][1]
+		else:
+			return None
 
 	def get(self, key):
 		if key in self:
@@ -173,6 +185,18 @@ class OSCpacket(OSC.OSCMessage):
 
 	def getAddress(self):
 		return OSC.decodeOSC(self.getBinary())[0]
+	
+	def setAddress(self, address):
+		items = self.items()
+		self.clear(address)
+		self.extend(items)
+
+	def decodeAddress(self):
+		return self.getAddress().split('/')[1:]
+
+	def encodeAddress(self, addrlist):
+		address = '/'+'/'.join(addrlist)
+		self.setAddress(address)
 			
 # non-scrambled print
 printlock = threading.Lock()
@@ -194,20 +218,14 @@ def goodbye(no):
 def broadcast(msg):
 	senderlist = server.senders.getall()
 	for no in senderlist:
-		senderlist[no].put(('msg', msg))
-
-def sendsocketno(no):
-	sender = server.senders.get(no)
-	OSCmsg = OSCpacket('/server/socket')
-	OSCmsg.append(no)
-	sender.put(('msg', OSCmsg))
+		senderlist[no][0].put(('msg', msg))
 
 def test(msg):
 	pass
 
 def sendtoclient(no, msg):
 	if no in server.senders:
-		sender = server.senders.get(no)
+		sender = server.senders.getqueue(no)
 		sender.put(('msg', msg))
 
 # MAIN
@@ -222,10 +240,26 @@ def main():
 			try:
 				# Do the actual server work
 				no, OSCmsg = server.recqueue.get(True, 1)
-				addr = OSCmsg.getAddress()
-				if  addr.split('/')[1] == 'b':
-					pass
-				broadcast(OSCmsg)
+				addr = OSCmsg.decodeAddress()
+				# proxy methods: b, <socketnumber>
+				if  addr[0] == 'b':
+					OSCmsg.encodeAddress(addr[1:])
+					broadcast(OSCmsg)
+				elif addr[0].isdigit(): 
+					OSCmsg.encodeAddress(addr[1:])
+					sendtoclient(int(addr[0]), OSCmsg)
+				# server methods: socket, ip
+				elif addr[0] == 's':
+					if addr[1] == 'server':
+						if addr[2] == 'socket':
+							OSCmsg.encodeAddress(addr[1:])
+							OSCmsg.append(no)
+							sendtoclient(no, OSCmsg)
+						if addr[2] == 'ip':
+							OSCmsg.encodeAddress(addr[1:])
+							ipaddr = server.senders.getaddr(no)[0].split('.')
+							OSCmsg.extend(ipaddr)
+							sendtoclient(no, OSCmsg)
 			except Queue.Empty:
 				pass
 	except KeyboardInterrupt:

@@ -1,4 +1,4 @@
-#N canvas 774 155 450 300 10;
+#N canvas 774 201 450 300 10;
 #X obj 93 59 mrpeach/packOSC;
 #X obj 93 92 mrpeach/slipenc;
 #X obj 93 114 iemnet/tcpclient;
@@ -6,8 +6,6 @@
 #X obj 93 158 mrpeach/unpackOSC;
 #X obj 93 180 print RECV;
 #X msg 256 102 disconnect;
-#X msg 93 27 /foo/bar 54 hallo;
-#X msg 238 71 connect localhost 8004;
 #N canvas 224 160 466 359 bundle 0;
 #X msg -64 -12 35 98 117 110 100 108 101 0 0 0 0 0 0 0 0 1 0 0 0 28
 47 116 101 115 116 0 0 0 44 105 105 105 0 0 0 0 0 0 0 5 0 0 0 6 0 0
@@ -37,13 +35,25 @@
 #X restore 256 33 pd bundle;
 #X obj 257 9 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
+#X msg 93 27 /b/foo/bar 54 hallo;
+#X msg 221 177 /s/server/socket;
+#X msg 265 141 /yoyo/blabla 234 sdfa;
+#X msg 220 203 /s/server/ip;
+#X msg 238 71 connect localhost 8003;
+#X msg 189 251 /\$1/blabla/yo/homi gaggi 23 1.324;
+#X floatatom 193 227 5 0 0 0 - - -;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
 #X connect 4 0 5 0;
 #X connect 6 0 2 0;
-#X connect 7 0 0 0;
-#X connect 8 0 2 0;
-#X connect 9 0 1 0;
-#X connect 10 0 9 0;
+#X connect 7 0 1 0;
+#X connect 8 0 7 0;
+#X connect 9 0 0 0;
+#X connect 10 0 0 0;
+#X connect 11 0 0 0;
+#X connect 12 0 0 0;
+#X connect 13 0 2 0;
+#X connect 14 0 0 0;
+#X connect 15 0 14 0;
