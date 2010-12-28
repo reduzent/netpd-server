@@ -1,20 +1,17 @@
 #!/usr/bin/python
 
-#######################################################################
-# THREADED NETPD SERVER
-# 
-# This is non-blocking version of the the netpd-server2. Each connected
-# client uses it's own sender and receiver thread and messages are
-# passed with python Queues between threads. 
-#
-# Although not recommend by many members of #python, this seems a
-# reliable and well working approach.
-#
-# AUTHOR: Roman Haefeli, Copyright 2010
-# LICENSE: GPL-2+
-#
-######################################################################
+"""THREADED NETPD SERVER
+ 
+ This is non-blocking version of the the netpd-server2. Each connected
+ client uses it's own sender and receiver thread and messages are
+ passed with python Queues between threads. 
 
+ Although not recommend by many members of #python, this seems a
+ reliable and well working approach.
+
+ AUTHOR: Roman Haefeli, Copyright 2010
+ LICENSE: GPL-2+
+"""
 
 ### MAIN SETTINGS ####################################################
 # Which port should the server listen on?
@@ -26,8 +23,11 @@ BUFFERSIZE = 40000
 
 import OSC, Queue, slip, socket, threading
 
-# SENDER THREAD
 class sender(threading.Thread):
+	"""waits for messages from the queue and sends
+	them over a socket.
+	"""
+
 	def __init__ (self, socket, queue):
 		threading.Thread.__init__(self)
 		self.socket = socket
@@ -35,6 +35,8 @@ class sender(threading.Thread):
 		self.queue =  queue
 
 	def run(self):
+		"""start the sender thread
+		"""
 		no = self.socket.fileno()
 		while 1:
 			cmd, OSCmsg = self.queue.get()
@@ -53,14 +55,16 @@ class sender(threading.Thread):
 				break
 		server.senders.remove(no)
 		try:
-			thprint('Client left: %s %d' % self.socket.getpeername())
 			self.socket.shutdown(2)
 		except:
 			bla = 1
 		goodbye(no)
 
-# RECEIVER THREAD
 class receiver(threading.Thread):
+	"""waits for incoming messages from the socket and puts
+	them into the receiver queue.
+	"""
+
 	def __init__ (self, socket, queue, sendqueue):
 		threading.Thread.__init__(self)
 		self.socket = socket
@@ -70,6 +74,8 @@ class receiver(threading.Thread):
 		self.OSCcontainer = OSCpacket()
 
 	def run(self):
+		"""start the receiver thread.
+		"""
 		no = self.socket.fileno()
 		thprint('Client joined: %s %d' % self.peername)
 		rest = ''
@@ -85,8 +91,11 @@ class receiver(threading.Thread):
                 thprint('Client left: %s %d' % self.peername)
 		self.sendqueue.put(('stop', None))
 
-# REQUEST HANDLER
 class requesthandler(threading.Thread):
+	"""waits for incoming connections and launches a receiver and
+	a sender thread for each connecting client
+	"""
+
 	def __init__(self):
 		threading.Thread.__init__(self)
 		self.conn = socket.socket()
@@ -96,6 +105,8 @@ class requesthandler(threading.Thread):
 		self.recqueue = Queue.Queue(BUFFERSIZE)
 		
 	def run(self):
+		"""start the requesthandler thread.
+		"""
 		thprint("Server listening on port %d" % PORT)
 		while 1:
 			self.conn.settimeout(3)
@@ -115,51 +126,59 @@ class requesthandler(threading.Thread):
 					break
 		self.conn.close()
 
-# CLIENT MANAGER
 class clientmanager(dict):
+	"""holds a list of all currently connected clients."""
+
 	def __init__(self):
 		self.lock = threading.Lock()
 
 	def add(self, key, value):
+		"""adds a new client to the list"""
 		self.lock.acquire()
 		self[key] = value
 		self.lock.release()
 
 	def remove(self, key):
+		"""removes a client from the list"""
 		self.lock.acquire()
 		del self[key]
 		self.lock.release()
 
 	def getall(self):
+		"""get a deep copy of the client list"""
 		copy = self.copy()
 		return copy
 
 	def getqueue(self, key):
+		"""get only the queue of the specified client"""
 		if key in self:
 			return self[key][0]
 		else:
 			return None
 
 	def getaddr(self, key):
+		"""get only the address, port of the specified client"""
 		if key in self:
 			return self[key][1]
 		else:
 			return None
 
 	def get(self, key):
+		"""get client data of specified client"""
 		if key in self:
 			return self[key]
 		else:
 			return None
 
-# create our own OSC container
 class OSCpacket(OSC.OSCMessage):
+	"""extended OSC packet container"""
 	
 	def __init__(self, address=""):
 		OSC.OSCMessage.__init__(self, address)
 		self.SERIAL = slip.slip()
 	
 	def unpack(self, raw):
+		"""get a OSC packet from raw data"""
 		unpacked = OSC.decodeOSC(raw)
 		packet = OSCpacket(unpacked[0])
 		for i in range(len(unpacked[1])):
@@ -168,9 +187,12 @@ class OSCpacket(OSC.OSCMessage):
 		return packet
 
 	def SERIALappend(self, chunk):
+		"""append SLIP encoded raw data to the OSC packet"""
 		self.SERIAL.append(chunk)
 
 	def SERIALunpack(self):
+		"""get a list of one or more OSC packets from SLIP encoded
+		raw data, that was previously appended using SERIALappend()"""
 		packetlist = []
 		rawpacketlist = self.SERIAL.decode()
 		for rawpacket in rawpacketlist:
@@ -178,58 +200,71 @@ class OSCpacket(OSC.OSCMessage):
 		return packetlist
 
 	def SERIALpack(self):
+		"""get SLIP encoded binary data of the OSC packet"""
 		return self.SERIAL.encode(self.pack())
 
 	def pack(self):
+		"""get binary data of the OSC packet"""
 		return self.getBinary()
 
 	def getAddress(self):
+		"""get the OSC address of the OSC packet"""
 		return OSC.decodeOSC(self.getBinary())[0]
 	
 	def setAddress(self, address):
+		"""overwrite current OSC address"""
 		items = self.items()
 		self.clear(address)
 		self.extend(items)
 
 	def decodeAddress(self):
+		"""get a list of the OSC address fields"""
 		return self.getAddress().split('/')[1:]
 
 	def encodeAddress(self, addrlist):
+		"""overwrite current OSC address by the address 
+		composed of the given field list"""
 		address = '/'+'/'.join(addrlist)
 		self.setAddress(address)
 			
-# non-scrambled print
 printlock = threading.Lock()
 def thprint(msg):
+	"""A thread-safe print"""
 	printlock.acquire()
 	print msg
 	printlock.release()
 
-# SERVER METHODS
+# Server methods
 def welcome(no):
+	"""is called whenever a new client connects"""
 	number = len(server.senders)
 	OSCmsg = OSCpacket('/server/num_of_clients')
 	OSCmsg.append(number)
 	broadcast(OSCmsg)
 
 def goodbye(no):
+	"""is called whenever a client disconnects"""
 	welcome(no)
 
 def broadcast(msg):
+	"""broadcast a message to all connected clients"""
 	senderlist = server.senders.getall()
 	for no in senderlist:
 		senderlist[no][0].put(('msg', msg))
 
 def test(msg):
+	"""does nothing. Is used by clients to keep connection alive."""
 	pass
 
 def sendtoclient(no, msg):
+	"""send a message to specified client"""
 	if no in server.senders:
 		sender = server.senders.getqueue(no)
 		sender.put(('msg', msg))
 
-# MAIN
+
 def main():
+	"""start the netpd server"""
 	global server
 	global shutdown
 	shutdown = False
@@ -265,7 +300,7 @@ def main():
 	except KeyboardInterrupt:
 		senderlist = server.senders.getall()
 		for no in senderlist:
-			senderlist[no].put(('stop', []))
+			senderlist[no][0].put(('stop', []))
 		shutdown = True
 		thprint("\nStopping Server ...")
 		exit()
