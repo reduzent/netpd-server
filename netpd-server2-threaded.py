@@ -15,7 +15,7 @@
 
 ### MAIN SETTINGS ####################################################
 # Which port should the server listen on?
-PORT = 8003
+PORT = 8004
 # How many messages should be bufferd before disconnecting a non-
 # responsive client?
 BUFFERSIZE = 40000 
@@ -238,7 +238,7 @@ def thprint(msg):
 def welcome(no):
 	"""is called whenever a new client connects"""
 	number = len(server.senders)
-	OSCmsg = OSCpacket('/server/num_of_clients')
+	OSCmsg = OSCpacket('/s/server/num_of_clients')
 	OSCmsg.append(number)
 	broadcast(OSCmsg)
 
@@ -278,20 +278,20 @@ def main():
 				addr = OSCmsg.decodeAddress()
 				# proxy methods: b, <socketnumber>
 				if  addr[0] == 'b':
-					OSCmsg.encodeAddress(addr[1:])
+					addr = [str(no)] + addr[1:]
+					OSCmsg.encodeAddress(addr)
 					broadcast(OSCmsg)
-				elif addr[0].isdigit(): 
-					OSCmsg.encodeAddress(addr[1:])
+				elif addr[0].isdigit():
+					addr = [str(no)] + addr[1:]
+					OSCmsg.encodeAddress(addr)
 					sendtoclient(int(addr[0]), OSCmsg)
 				# server methods: socket, ip
 				elif addr[0] == 's':
 					if addr[1] == 'server':
 						if addr[2] == 'socket':
-							OSCmsg.encodeAddress(addr[1:])
 							OSCmsg.append(no)
 							sendtoclient(no, OSCmsg)
 						if addr[2] == 'ip':
-							OSCmsg.encodeAddress(addr[1:])
 							ipaddr = server.senders.getaddr(no)[0].split('.')
 							OSCmsg.extend(ipaddr)
 							sendtoclient(no, OSCmsg)
