@@ -15,7 +15,7 @@
 
 ### MAIN SETTINGS ####################################################
 # Which port should the server listen on?
-PORT = 8004
+PORT = 8003
 # How many messages should be bufferd before disconnecting a non-
 # responsive client?
 BUFFERSIZE = 40000 
