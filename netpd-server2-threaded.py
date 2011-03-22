@@ -57,7 +57,7 @@ class sender(threading.Thread):
 		try:
 			self.socket.shutdown(2)
 		except:
-			bla = 1
+			pass
 		goodbye(no)
 
 class receiver(threading.Thread):
