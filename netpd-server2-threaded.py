@@ -282,9 +282,10 @@ def main():
 					OSCmsg.encodeAddress(addr)
 					broadcast(OSCmsg)
 				elif addr[0].isdigit():
+					receiver = int(addr[0])
 					addr = [str(no)] + addr[1:]
 					OSCmsg.encodeAddress(addr)
-					sendtoclient(int(addr[0]), OSCmsg)
+					sendtoclient(receiver, OSCmsg)
 				# server methods: socket, ip
 				elif addr[0] == 's':
 					if addr[1] == 'server':
