@@ -1,4 +1,4 @@
-#N canvas 0 271 395 544 10;
+#N canvas 72 189 395 544 10;
 #X declare -stdpath extra/iemnet -stdpath extra/mrpeach;
 #X obj 13 39 inlet;
 #X obj 13 464 outlet;
@@ -11,8 +11,7 @@
 #X obj 36 208 list prepend num_of_clients;
 #X obj 82 145 list trim;
 #X obj 82 124 list prepend ip;
-#N canvas 816 227 247 348 \$0.TCPSOCKETCONTAINER 0;
-#X obj 10 0 tcpsocket.OSC 1006 6;
+#N canvas 816 283 247 348 \$0.TCPSOCKETCONTAINER 0;
 #X restore 14 372 pd \$0.TCPSOCKETCONTAINER;
 #N canvas 491 218 502 504 socketmanager 0;
 #X msg 24 196 \$1 reset;
@@ -89,7 +88,7 @@ no socket handler on specified socket) \,;
 #X obj 101 104 list trim;
 #X obj 101 83 list prepend status;
 #X obj 13 14 declare -stdpath extra/iemnet -stdpath extra/mrpeach;
-#X text 24 518 Version: 2010-01-05;
+#X text 24 518 Version: 2011-09-06;
 #X connect 0 0 13 0;
 #X connect 5 0 17 0;
 #X connect 6 0 17 0;
