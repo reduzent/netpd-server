@@ -482,7 +482,7 @@ to check the first seven bytes (2x'/' + 6);
 #X text 246 219 num_of_clients;
 #X text 244 64 to clients;
 #X text 247 339 from clients;
-#X obj 8 113 ../netpd-server2/tcpsocketserver OSC 8003;
+#X obj 8 113 ../netpd-server2/tcpsocketserver OSC 3025;
 #X connect 0 0 1 0;
 #X connect 1 0 16 0;
 #X connect 3 0 2 0;
