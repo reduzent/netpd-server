@@ -21,6 +21,7 @@ externals:
   * iemnet
   * osc
   * slip
+
 As of Pd version 0.47 you can easily install externals through the menu 'Help'->'Find
 externals'. Make sure to install the version suitable for your platform (listed in 
 black color as opposed to grey color).
