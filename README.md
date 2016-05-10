@@ -1,12 +1,11 @@
 netpd-server
 ============
 
-unofficial development repository for the OSC-based netpd-server
+Development repository for the OSC-based netpd-server
 
-The included Pd patch is used currently used for netpd. An instance
-of it is always running on netpd.org:3025 .
+This is a python implementation of the netpd protocol as specified in:
 
-TODO: 
- * Proper documentation
- * Proper release
- * Tidy up stuff
+<http://www.netpd.org/Protocol>
+
+It turns out the python implementation is much slower than the Pd
+version, which uses externals written in C.
