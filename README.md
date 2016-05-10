@@ -53,7 +53,7 @@ them to connect to your netpd-server, your users need to configure their
 clients accordingly. This can be done through the _[pref]
 (http://www.netpd.org/NetpdPreferences)_ panel in _[chat.pd]
 (http://www.netpd.org/Chat)_. Correct values for 'IP' (and 'Port', if you
-changed the default) need to entered. Those settings might be saved. 
+changed the default) need to be entered. Those settings might be saved. 
 
 #### Bugs and feature requests ####
 
@@ -64,5 +64,3 @@ mail to <roman@netpd.org> or by opening an issue on GitHub.
 
 netpd-server.pd and its abstractions are released under the terms of
 the GNU General Public License. See LICENSE.txt for the full text.
-
-
