@@ -1,8 +1,7 @@
-#N canvas 636 71 455 534 10;
-#X declare -stdpath slip;
-#X obj 50 49 == \$2;
-#X obj 7 28 route in socket;
-#X obj 7 76 spigot;
+#N canvas 636 71 454 505 10;
+#X obj 53 49 == \$2;
+#X obj 10 28 route in socket;
+#X obj 10 76 spigot;
 #N canvas 622 183 512 335 reset 0;
 #X obj 23 41 route \$2;
 #X obj 23 63 route reset;
@@ -23,30 +22,30 @@ on specified socket already exists.;
 #X connect 2 1 3 0;
 #X connect 3 0 9 0;
 #X connect 10 0 0 0;
-#X restore 40 102 pd reset;
-#X obj 104 280 route socket ip;
-#X obj 41 367 list append;
-#X obj 58 323 list append;
-#X obj 7 299 t a b b b;
-#X obj 7 414 list prepend out;
-#X obj 41 391 list prepend socket.out;
-#X obj 58 345 list prepend ip.out;
-#X obj 7 442 list trim;
-#X text 16 220 the lower part makes [tcpsocketserver] behave like [tcpserver]
+#X restore 43 102 pd reset;
+#X obj 107 280 route socket ip;
+#X obj 44 367 list append;
+#X obj 61 323 list append;
+#X obj 10 299 t a b b b;
+#X obj 10 414 list prepend out;
+#X obj 44 391 list prepend socket.out;
+#X obj 61 345 list prepend ip.out;
+#X obj 10 442 list trim;
+#X text 19 220 the lower part makes [tcpsocketserver] behave like [tcpserver]
 ;
-#X obj -2 136 cnv 15 450 70 empty empty empty 20 12 0 14 -204786 -66577
+#X obj 1 136 cnv 15 450 70 empty empty empty 20 12 0 14 -204786 -66577
 0;
-#X text 70 162 <- PUT HERE THE PROTOCOL SPECIFIC DELIMITER CODE;
-#X text 15 197 --------------------------------------------------------
+#X text 73 162 <- PUT HERE THE PROTOCOL SPECIFIC DELIMITER CODE;
+#X text 18 197 --------------------------------------------------------
 ;
-#X text 13 129 --------------------------------------------------------
+#X text 16 129 --------------------------------------------------------
 ;
-#X obj 7 6 r \$1.TCPSOCKET;
-#X obj 7 465 s \$1.TCPSOCKET;
-#X obj 104 256 r \$1.TCPSOCKET;
-#X text 200 454 Author: Roman Haefeli;
-#X text 55 75 <- only pass stream of own socket;
-#N canvas 389 144 279 275 OSC 0;
+#X obj 10 6 r \$1.TCPSOCKET;
+#X obj 10 465 s \$1.TCPSOCKET;
+#X obj 107 256 r \$1.TCPSOCKET;
+#X text 203 454 Author: Roman Haefeli;
+#X text 58 75 <- only pass stream of own socket;
+#N canvas 389 172 279 303 OSC 0;
 #X obj 17 48 inlet;
 #X obj 17 216 outlet;
 #X obj 134 53 inlet;
@@ -57,7 +56,6 @@ on specified socket already exists.;
 #X msg 173 129 0;
 #X msg 134 130 1;
 #X obj 17 153 slipdec 16384;
-#X obj 18 14 declare -stdpath slip;
 #X connect 0 0 9 0;
 #X connect 2 0 5 0;
 #X connect 4 0 1 0;
@@ -68,8 +66,8 @@ on specified socket already exists.;
 #X connect 7 0 4 1;
 #X connect 8 0 4 1;
 #X connect 9 0 4 0;
-#X restore 7 161 pd OSC;
-#X text 201 474 Version: 2011-01-05;
+#X restore 10 161 pd OSC;
+#X text 204 474 Version: 2011-01-05;
 #X connect 0 0 2 1;
 #X connect 1 0 2 0;
 #X connect 1 1 0 0;
