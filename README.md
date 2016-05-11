@@ -26,13 +26,13 @@ As of Pd version 0.47 you can easily install externals through the menu
 'Help'->'Find externals'. Make sure to install the version suitable for
 your platform (listed in black color as opposed to grey color).
 
-Once the necessary externals are installed, you can load netpd-server.pd
+Once the necessary externals are installed, you can load __netpd-server.pd__
 with Pd. Alternatively, you may want to launch Pd from the command-line
 in nogui-mode, since the patch doesn't provide any way of user interaction:
 
 `pd -nogui -open netpd-server.pd`
 
-__NOTE__: netpd-server.pd might also work correctly with Pd-extended
+__NOTE__: __netpd-server.pd__ might also work correctly with Pd-extended
 using the included mrpeach library instead of the libraries from the list
 above. However, future support for this setup is not guaranteed.
 
@@ -53,7 +53,7 @@ them to connect to your netpd-server, your users need to configure their
 clients accordingly. This can be done through the _[pref]
 (http://www.netpd.org/NetpdPreferences)_ panel in _[chat.pd]
 (http://www.netpd.org/Chat)_. Correct values for 'IP' (and 'Port', if you
-changed the default) need to be entered. Those settings might be saved. 
+changed the default) need to be entered. Those settings can be saved. 
 
 #### Bugs and feature requests ####
 
@@ -62,5 +62,5 @@ mail to <roman@netpd.org> or by opening an issue on GitHub.
 
 #### License ####
 
-netpd-server.pd and its abstractions are released under the terms of
+__netpd-server.pd__ and its abstractions are released under the terms of
 the GNU General Public License. See LICENSE.txt for the full text.
