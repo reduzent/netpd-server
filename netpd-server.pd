@@ -669,7 +669,7 @@ to check the first seven bytes (2x'/' + 6);
 #N canvas 387 198 213 152 tcp.prepare 0;
 #X obj 17 8 inlet;
 #X obj 17 122 outlet;
-#X obj 17 64 slipenc 16384;
+#X obj 17 64 slipenc 65536;
 #X connect 0 0 2 0;
 #X connect 2 0 1 0;
 #X restore 12 548 pd tcp.prepare;

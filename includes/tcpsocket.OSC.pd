@@ -55,7 +55,7 @@ on specified socket already exists.;
 #X msg 153 97 192 192;
 #X msg 173 129 0;
 #X msg 134 130 1;
-#X obj 17 153 slipdec 16384;
+#X obj 17 153 slipdec 65536;
 #X connect 0 0 9 0;
 #X connect 2 0 5 0;
 #X connect 4 0 1 0;
