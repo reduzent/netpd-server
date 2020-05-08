@@ -1,6 +1,6 @@
 #N canvas 270 99 429 645 10;
-#X declare -stdpath mrpeach;
 #X declare -path includes -path osc -path slip -path iemnet;
+#X declare -path mrpeach;
 #N canvas 887 137 555 789 forward_to_socket 0;
 #X obj 15 119 route 47;
 #N canvas 805 209 205 169 serialize 0;
@@ -739,7 +739,6 @@ to check the first seven bytes (2x'/' + 6);
 #X connect 15 0 6 0;
 #X restore 12 420 pd provide_protocol_version;
 #X msg 282 32 \; protocol_version 2 0;
-#X obj 12 178 declare -stdpath mrpeach;
 #X text 165 178 <- support for legacy library;
 #X text 284 608 2016 \, Roman Haefeli;
 #X text 8 6 netpd-server;
@@ -756,6 +755,7 @@ to check the first seven bytes (2x'/' + 6);
 #X text 77 214 <- change port number in subpatch;
 #X obj 12 141 declare -path includes -path osc -path slip -path iemnet
 ;
+#X obj 12 178 declare -path mrpeach;
 #X connect 1 0 3 0;
 #X connect 2 0 1 0;
 #X connect 12 0 16 0;
