@@ -1,7 +1,6 @@
-#N canvas 270 44 429 645 10;
+#N canvas 270 99 429 645 10;
 #X declare -stdpath mrpeach;
-#X declare -path includes -stdpath osc -stdpath slip -stdpath iemnet
-;
+#X declare -path includes -path osc -path slip -path iemnet;
 #N canvas 887 137 555 789 forward_to_socket 0;
 #X obj 15 119 route 47;
 #N canvas 805 209 205 169 serialize 0;
@@ -691,7 +690,7 @@ to check the first seven bytes (2x'/' + 6);
 #X connect 4 0 1 0;
 #X connect 5 0 6 0;
 #X restore 202 397 pd CPU_LOAD;
-#X floatatom 202 421 5 0 0 0 - - -, f 5;
+#X floatatom 202 421 5 0 0 0 - - -;
 #X text 241 420 %;
 #X obj 282 10 loadbang;
 #N canvas 522 115 299 324 provide_protocol_version 0;
@@ -745,8 +744,6 @@ to check the first seven bytes (2x'/' + 6);
 #X text 284 608 2016 \, Roman Haefeli;
 #X text 8 6 netpd-server;
 #X text 6 21 ------------------------------------------;
-#X obj 12 141 declare -path includes -stdpath osc -stdpath slip -stdpath
-iemnet;
 #X obj 9 31 cnv 15 250 90 empty empty empty 20 12 0 14 -232576 -66577
 0;
 #X text 8 94 http://www.netpd.org/server;
@@ -757,6 +754,8 @@ iemnet;
 0;
 #X text 97 229 default port is 3025;
 #X text 77 214 <- change port number in subpatch;
+#X obj 12 141 declare -path includes -path osc -path slip -path iemnet
+;
 #X connect 1 0 3 0;
 #X connect 2 0 1 0;
 #X connect 12 0 16 0;
